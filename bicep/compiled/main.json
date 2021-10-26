@@ -4,8 +4,8 @@
   "metadata": {
     "_generator": {
       "name": "bicep",
-      "version": "0.4.412.5873",
-      "templateHash": "2163985663435246409"
+      "version": "0.4.1008.15138",
+      "templateHash": "1200264188324404708"
     }
   },
   "parameters": {
@@ -283,7 +283,7 @@
     "aks_identity_user": {
       "type": "UserAssigned",
       "userAssignedIdentities": {
-        "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('user_identity_name'))]": {}
+        "[format('{0}', resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('user_identity_name')))]": {}
       }
     },
     "policySetPodSecBaseline": "[resourceId('Microsoft.Authorization/policySetDefinitions', 'a8640138-9b0a-4a28-b8cb-1666c838647d')]",
@@ -385,7 +385,7 @@
             "properties": {
               "addressPrefix": "0.0.0.0/1",
               "nextHopType": "VirtualAppliance",
-              "nextHopIpAddress": "[reference(resourceId('Microsoft.Resources/deployments', 'calcAzFwIp'), '2019-10-01').outputs.FirewallPrivateIp.value]"
+              "nextHopIpAddress": "[reference(resourceId('Microsoft.Resources/deployments', 'calcAzFwIp'), '2020-06-01').outputs.FirewallPrivateIp.value]"
             }
           }
         ]
@@ -626,7 +626,7 @@
     {
       "condition": "[not(empty(parameters('dnsZoneId')))]",
       "type": "Microsoft.Resources/deployments",
-      "apiVersion": "2019-10-01",
+      "apiVersion": "2020-06-01",
       "name": "addDnsContributor",
       "resourceGroup": "[variables('dnsZoneRg')]",
       "properties": {
@@ -648,8 +648,8 @@
           "metadata": {
             "_generator": {
               "name": "bicep",
-              "version": "0.4.412.5873",
-              "templateHash": "10533646359441572843"
+              "version": "0.4.1008.15138",
+              "templateHash": "17917226395733154093"
             }
           },
           "parameters": {
@@ -686,7 +686,7 @@
     {
       "condition": "[and(variables('existing_vnet'), variables('user_identity'))]",
       "type": "Microsoft.Resources/deployments",
-      "apiVersion": "2019-10-01",
+      "apiVersion": "2020-06-01",
       "name": "addAksNetContributor",
       "resourceGroup": "[variables('existingAksVnetRG')]",
       "properties": {
@@ -714,8 +714,8 @@
           "metadata": {
             "_generator": {
               "name": "bicep",
-              "version": "0.4.412.5873",
-              "templateHash": "9301802066416436980"
+              "version": "0.4.1008.15138",
+              "templateHash": "494498360298765839"
             }
           },
           "parameters": {
@@ -743,7 +743,7 @@
               "type": "Microsoft.Authorization/roleAssignments",
               "apiVersion": "2020-04-01-preview",
               "scope": "[format('Microsoft.Network/virtualNetworks/{0}/subnets/{1}', variables('existingAksVnetName'), variables('existingAksSubnetName'))]",
-              "name": "[guid(parameters('user_identity_principalId'), variables('existingAksSubnetName'))]",
+              "name": "[format('{0}', guid(parameters('user_identity_principalId'), variables('existingAksSubnetName')))]",
               "properties": {
                 "roleDefinitionId": "[variables('networkContributorRole')]",
                 "principalId": "[reference(extensionResourceId(format('/subscriptions/{0}/resourceGroups/{1}', subscription().subscriptionId, parameters('user_identity_rg')), 'Microsoft.ManagedIdentity/userAssignedIdentities', parameters('user_identity_name')), '2018-11-30').principalId]",
@@ -759,7 +759,7 @@
     },
     {
       "type": "Microsoft.Resources/deployments",
-      "apiVersion": "2019-10-01",
+      "apiVersion": "2020-06-01",
       "name": "calcAzFwIp",
       "properties": {
         "expressionEvaluationOptions": {
@@ -777,8 +777,8 @@
           "metadata": {
             "_generator": {
               "name": "bicep",
-              "version": "0.4.412.5873",
-              "templateHash": "14864707907865820525"
+              "version": "0.4.1008.15138",
+              "templateHash": "12110313447280413643"
             }
           },
           "parameters": {
@@ -804,7 +804,7 @@
     {
       "condition": "[variables('deployAppGw')]",
       "type": "Microsoft.Resources/deployments",
-      "apiVersion": "2019-10-01",
+      "apiVersion": "2020-06-01",
       "name": "addAppGw",
       "properties": {
         "expressionEvaluationOptions": {
@@ -831,8 +831,8 @@
           "metadata": {
             "_generator": {
               "name": "bicep",
-              "version": "0.4.412.5873",
-              "templateHash": "422681224698870356"
+              "version": "0.4.1008.15138",
+              "templateHash": "2109386769698142182"
             }
           },
           "parameters": {
@@ -853,11 +853,11 @@
           "functions": [],
           "variables": {
             "appgwName": "[format('agw-{0}', parameters('resourceName'))]",
-            "appgwResourceId": "[resourceId('Microsoft.Network/applicationGateways', variables('appgwName'))]",
+            "appgwResourceId": "[resourceId('Microsoft.Network/applicationGateways', format('{0}', variables('appgwName')))]",
             "frontendPublicIpConfig": {
               "properties": {
                 "publicIPAddress": {
-                  "id": "[resourceId('Microsoft.Network/publicIPAddresses', format('pip-agw-{0}', parameters('resourceName')))]"
+                  "id": "[format('{0}', resourceId('Microsoft.Network/publicIPAddresses', format('pip-agw-{0}', parameters('resourceName'))))]"
                 }
               },
               "name": "appGatewayFrontendIP"
@@ -990,7 +990,7 @@
     },
     "ApplicationGatewayName": {
       "type": "string",
-      "value": "[if(variables('deployAppGw'), reference(resourceId('Microsoft.Resources/deployments', 'addAppGw'), '2019-10-01').outputs.ApplicationGatewayName.value, '')]"
+      "value": "[if(variables('deployAppGw'), reference(resourceId('Microsoft.Resources/deployments', 'addAppGw'), '2020-06-01').outputs.ApplicationGatewayName.value, '')]"
     }
   }
 }
